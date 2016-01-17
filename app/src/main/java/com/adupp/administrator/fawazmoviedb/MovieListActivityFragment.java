@@ -3,8 +3,9 @@ package com.adupp.administrator.fawazmoviedb;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,18 @@ public class MovieListActivityFragment extends Fragment {
     private ArrayList<String> movieListArray;
     public MovieListActivityFragment() {
     }
+    private void UpdateMovieList()
+    {
+        String sortBy = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(getString(R.string.option_sort_key), getString(R.string.option_sort_popularity_value));
+        FetchMovieTask  movieTask = new FetchMovieTask();
+        movieTask.execute(sortBy);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        UpdateMovieList();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,14 +61,12 @@ public class MovieListActivityFragment extends Fragment {
         movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent detailAct = new Intent(getActivity(),MovieDetail.class);
-                detailAct.putExtra("MOVIELIST",MovieListAdapter.getItem(position));
+                Intent detailAct = new Intent(getActivity(), MovieDetail.class);
+                detailAct.putExtra("MOVIELIST", MovieListAdapter.getItem(position));
                 startActivity(detailAct);
             }
         });
 
-        FetchMovieTask  movieTask = new FetchMovieTask();
-        movieTask.execute("popularity");
         return v;
     }
 
@@ -158,6 +169,7 @@ public class MovieListActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String[] strings) {
+            MovieListAdapter.clear();
             if (strings != null)
             {   movieListArray.addAll(Arrays.asList(strings));
                 MovieListAdapter.setGridData(movieListArray);
