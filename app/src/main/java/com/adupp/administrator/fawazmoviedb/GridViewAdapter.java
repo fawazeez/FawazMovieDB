@@ -57,7 +57,7 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
         //String item = "http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg" ;
         GridItem item = mGridData.get(position);
         holder.titleTextView.setText(item.getOriginal_title());
-        Picasso.with(mContext).load(item.getPoster_path()).into(holder.imageView);
+        Picasso.with(mContext).load(item.getPoster_path()).placeholder(R.mipmap.ic_launcher).into(holder.imageView);
          return row;
        // return super.getView(position, convertView, parent);
     }
