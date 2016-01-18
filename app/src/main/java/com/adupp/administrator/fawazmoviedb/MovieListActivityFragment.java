@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,22 +25,29 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MovieListActivityFragment extends Fragment {
     private static final String TAG = MovieListActivityFragment.class.getSimpleName();
+    private static final String TITLE_INTENT_KEY = "Original Title";
+    private static final String OVERVIEW_INTENT_KEY = "Synopsis ";
+    private static final String POSTERPATH_INTENT_KEY = "Poter";
+    private static final String USERRATING_INTENT_KEY = "User Rating";
+    private static final String RELEASEDATE_INTENT_KEY = "Release Date";
+
     private GridViewAdapter MovieListAdapter ;
-    private ArrayList<String> movieListArray;
+    private ArrayList<GridItem> movieListArray;
     public MovieListActivityFragment() {
     }
     private void UpdateMovieList()
     {
         String sortBy = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(getString(R.string.option_sort_key), getString(R.string.option_sort_popularity_value));
         FetchMovieTask  movieTask = new FetchMovieTask();
+        MovieListAdapter.clear();
         movieTask.execute(sortBy);
+
     }
 
     @Override
@@ -53,16 +61,20 @@ public class MovieListActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
-
-        movieListArray = new ArrayList<String>();
+        movieListArray = new ArrayList<GridItem>();
         MovieListAdapter = new GridViewAdapter(getActivity(),R.layout.movie_grid_item_layout,movieListArray);
         GridView movieGrid= (GridView)v.findViewById(R.id.movieGridView);
         movieGrid.setAdapter(MovieListAdapter);
         movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                GridItem item = (GridItem) parent.getItemAtPosition(position);
                 Intent detailAct = new Intent(getActivity(), MovieDetail.class);
-                detailAct.putExtra("MOVIELIST", MovieListAdapter.getItem(position));
+                detailAct.putExtra(TITLE_INTENT_KEY, item.getOriginal_title());
+                detailAct.putExtra(OVERVIEW_INTENT_KEY, item.getOverview());
+                detailAct.putExtra(POSTERPATH_INTENT_KEY, item.getPoster_path());
+                detailAct.putExtra(USERRATING_INTENT_KEY, item.getVote_average());
+                detailAct.putExtra(RELEASEDATE_INTENT_KEY,item.getRelease_date());
                 startActivity(detailAct);
             }
         });
@@ -70,10 +82,12 @@ public class MovieListActivityFragment extends Fragment {
         return v;
     }
 
-    public class FetchMovieTask extends AsyncTask<String,Void,String[]>
+    public class FetchMovieTask extends AsyncTask<String,Void,Integer>
     {
         @Override
-        protected String[] doInBackground(String... params) {
+        protected Integer doInBackground(String... params) {
+
+            Integer result = null;
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
@@ -101,7 +115,7 @@ public class MovieListActivityFragment extends Fragment {
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
                     // Nothing to do.
-                    return null;
+                    return result;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -115,7 +129,7 @@ public class MovieListActivityFragment extends Fragment {
 
                 if (buffer.length() == 0) {
                     // Stream was empty.  No point in parsing.
-                    return null;
+                    return result;
                 }
                 movieJsonStr = buffer.toString();
 
@@ -123,7 +137,7 @@ public class MovieListActivityFragment extends Fragment {
                 Log.e(TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
                 // to parse it.
-                return null;
+                return result;
             } finally{
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -133,46 +147,60 @@ public class MovieListActivityFragment extends Fragment {
                         reader.close();
                     } catch (final IOException e) {
                         Log.e(TAG, "Error closing stream", e);
+                        return result;
                     }
                 }
             }
 
             try {
-                return getMovieFromJson(movieJsonStr);
+                result =getMovieFromJson(movieJsonStr);
+
             }
             catch (JSONException e) {
                 e.printStackTrace();
+                result = null;
             }
-            return null;
+            return result;
         }
 
-        private String[] getMovieFromJson(String result)  throws JSONException {
+        private Integer getMovieFromJson(String result)  throws JSONException {
 
             final String OWM_RESULTS = "results";
             final String OWM_POSTER = "poster_path";
             final String OWM_ID = "id";
             final String OWM_ORIGINAL_TITLE = "original_title";
+            final String OWM_RELEASE_DATE = "release_date";
+            final String OWM_VOTE_AVERAGE = "vote_average";
+            final String OWM_OVERVIEW = "overview";
+            GridItem movieItem;
+            String re = null;
 
             JSONObject response = new JSONObject(result);
             JSONArray results = response.getJSONArray(OWM_RESULTS);
             String[] resultStr = new String[results.length()];
             for (int i = 0; i < results.length(); i++) {
+                movieItem = new GridItem();
                 JSONObject List = results.getJSONObject(i);
-                int id = List.getInt(OWM_ID);
-                String PosterPath = List.getString(OWM_POSTER);
-                String title = List.getString(OWM_ORIGINAL_TITLE);
+                movieItem.setId(List.getString(OWM_ID));
+                movieItem.setPoster_path("http://image.tmdb.org/t/p/w185//" + List.optString(OWM_POSTER));
+                movieItem.setOriginal_title(List.optString(OWM_ORIGINAL_TITLE));
+                movieItem.setOverview(List.optString(OWM_OVERVIEW));
+                movieItem.setRelease_date(List.optString(OWM_RELEASE_DATE));
+                movieItem.setVote_average(List.getString(OWM_VOTE_AVERAGE));
+                movieListArray.add(movieItem);
 
-                resultStr[i]= "http://image.tmdb.org/t/p/w185" + PosterPath;
             }
-            return resultStr;
+            return movieListArray.size();
         }
 
         @Override
-        protected void onPostExecute(String[] strings) {
-            MovieListAdapter.clear();
-            if (strings != null)
-            {   movieListArray.addAll(Arrays.asList(strings));
+        protected void onPostExecute(Integer result) {
+          //  MovieListAdapter.clear();
+            if (result != 0) {
                 MovieListAdapter.setGridData(movieListArray);
+            }else
+            {
+                Toast.makeText(getActivity(), "Failed to fetch data!", Toast.LENGTH_SHORT).show();
             }
         }
     }

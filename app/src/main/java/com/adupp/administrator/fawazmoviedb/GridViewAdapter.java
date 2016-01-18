@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -15,14 +16,14 @@ import java.util.ArrayList;
 /**
  * Created by Administrator on 1/15/2016.
  */
-public class GridViewAdapter extends ArrayAdapter<String> {
+public class GridViewAdapter extends ArrayAdapter<GridItem> {
 
     private Context mContext;
     private int layoutResourceId;
-    private ArrayList<String> mGridData = new ArrayList<String>();
+    private ArrayList<GridItem> mGridData = new ArrayList<GridItem>();
 
 
-    public GridViewAdapter(Context mContext, int layoutResourceId, ArrayList<String> mGridData)
+    public GridViewAdapter(Context mContext, int layoutResourceId, ArrayList<GridItem> mGridData)
     {
         super(mContext,layoutResourceId,mGridData);
         this.layoutResourceId = layoutResourceId;
@@ -30,7 +31,7 @@ public class GridViewAdapter extends ArrayAdapter<String> {
         this.mGridData = mGridData;
     }
 
-    public void setGridData(ArrayList<String> mGridData) {
+    public void setGridData(ArrayList<GridItem> mGridData) {
         this.mGridData = mGridData;
         notifyDataSetChanged();
     }
@@ -38,25 +39,32 @@ public class GridViewAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        ImageView holder;
+        ViewHolder holder;
         if (row == null)
         {
             LayoutInflater inflater= ((Activity)mContext).getLayoutInflater();
             row=inflater.inflate(layoutResourceId,parent,false);
-            holder =  (ImageView) row.findViewById(R.id.movieImageView);
+            holder = new ViewHolder();
+            holder.titleTextView=(TextView)row.findViewById(R.id.movieNameTextView);
+            holder.imageView= (ImageView) row.findViewById(R.id.movieImageView);
+            row.setTag(holder);
         }
             else
         {
-            holder =  (ImageView) row.findViewById(R.id.movieImageView);
+            holder =  (ViewHolder) row.getTag();
         }
 
         //String item = "http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg" ;
-        String item = mGridData.get(position);
-        Picasso.with(mContext).load(item).into(holder);
-  return row;
+        GridItem item = mGridData.get(position);
+        holder.titleTextView.setText(item.getOriginal_title());
+        Picasso.with(mContext).load(item.getPoster_path()).into(holder.imageView);
+         return row;
        // return super.getView(position, convertView, parent);
     }
-
+    static class ViewHolder {
+        TextView titleTextView;
+        ImageView imageView;
+    }
 
 
 }
