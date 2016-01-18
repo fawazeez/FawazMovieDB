@@ -8,6 +8,79 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MovieDetailFragment"
     tools:showIn="@layout/activity_movie_detail">
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/movie_item_image"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ImageView
+        android:id="@+id/movie_item_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/content_description_image"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/OverViewText"
+        android:layout_below="@+id/label_TextView2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/dateTextView"
+        android:layout_below="@+id/ratingTextView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+ />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/ratingBarStyleSmall"
+        android:id="@+id/movieRatingBar"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/title" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/release_date_label"
+        android:id="@+id/label_TextView"
+        android:layout_below="@+id/ratingTextView"
+        android:layout_toLeftOf="@+id/dateTextView"
+        android:layout_toStartOf="@id/dateTextView"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/synopsis_label"
+        android:id="@+id/label_TextView2"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:textStyle="bold"
+        android:layout_below="@+id/dateTextView"
+ />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/ratingTextView"
+        android:layout_toLeftOf="@+id/movieRatingBar"
+        android:layout_toStartOf="@id/movieRatingBar"
+        android:layout_below="@+id/title"
+ />
 
 
 </RelativeLayout>

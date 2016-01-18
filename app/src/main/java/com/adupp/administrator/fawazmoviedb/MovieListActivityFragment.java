@@ -187,6 +187,7 @@ public class MovieListActivityFragment extends Fragment {
                 movieItem.setOverview(List.optString(OWM_OVERVIEW));
                 movieItem.setRelease_date(List.optString(OWM_RELEASE_DATE));
                 movieItem.setVote_average(List.getString(OWM_VOTE_AVERAGE));
+//                if (List.optString(OWM_POSTER) != null && List.optString(OWM_POSTER)!= "")
                 movieListArray.add(movieItem);
 
             }
