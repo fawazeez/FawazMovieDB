@@ -2,7 +2,7 @@
     <string name="app_name">FawazMovieDB</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_movie__detail">Movie_Detail</string>
-
+    <string name="naLabel">Not Available</string>
     <string name="release_date_label">Released On:</string>
 
     <string name="synopsis_label">Synopsis :</string>

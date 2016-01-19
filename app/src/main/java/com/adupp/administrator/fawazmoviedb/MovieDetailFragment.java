@@ -61,8 +61,8 @@ public class MovieDetailFragment extends Fragment {
             }
 
             if ( intent.hasExtra(USERRATING_INTENT_KEY)) {
-                ((RatingBar) rootView.findViewById(R.id.movieRatingBar)).setRating((Float.parseFloat(intent.getStringExtra(USERRATING_INTENT_KEY)))/2);
-                ((TextView) rootView.findViewById(R.id.ratingTextView)).setText(intent.getStringExtra(USERRATING_INTENT_KEY));
+                ((RatingBar) rootView.findViewById(R.id.movieRatingBar)).setRating(Float.parseFloat(intent.getStringExtra(USERRATING_INTENT_KEY)));
+                ((TextView) rootView.findViewById(R.id.ratingTextView)).setText(intent.getStringExtra(USERRATING_INTENT_KEY)+" /10");
             }
             if ( intent.hasExtra(POSTERPATH_INTENT_KEY))
                 Picasso.with(getActivity()).load(intent.getStringExtra(POSTERPATH_INTENT_KEY)).into((ImageView)rootView.findViewById(R.id.movie_item_image));

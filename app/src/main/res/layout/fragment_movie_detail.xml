@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorBackground"
     tools:context=".MovieDetailFragment"
     tools:showIn="@layout/activity_movie_detail">
 
@@ -10,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"
-        android:layout_gravity="left|center_vertical">
+        android:layout_gravity="start|center_vertical">
 
 
     <RelativeLayout
@@ -39,47 +40,34 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
+        android:text="@string/naLabel"
         android:id="@+id/OverViewText"
-        android:layout_below="@+id/label_TextView2" />
+        android:layout_below="@+id/synopsis_label_TextView" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
+        android:text="@string/naLabel"
         android:id="@+id/dateTextView"
         android:layout_below="@+id/ratingTextView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
  />
 
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?android:attr/ratingBarStyleSmall"
-        android:id="@+id/movieRatingBar"
-        android:numStars="5"
-        android:stepSize="0.5"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/title" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/CustomLabelStyle"
         android:text="@string/release_date_label"
-        android:id="@+id/label_TextView"
+        android:id="@+id/release_date_label_TextView"
         android:layout_below="@+id/ratingTextView"
         android:layout_toLeftOf="@+id/dateTextView"
         android:layout_toStartOf="@id/dateTextView"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/CustomLabelStyle"
         android:text="@string/synopsis_label"
-        android:id="@+id/label_TextView2"
+        android:id="@+id/synopsis_label_TextView"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:textStyle="bold"
         android:layout_below="@+id/dateTextView"
  />
 
@@ -87,14 +75,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
+        android:text="@string/naLabel"
         android:id="@+id/ratingTextView"
-        android:layout_toLeftOf="@+id/movieRatingBar"
-        android:layout_toStartOf="@id/movieRatingBar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/title"
  />
 
 
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/ratingBarStyleSmall"
+            android:id="@+id/movieRatingBar"
+            android:numStars="10"
+            android:stepSize="0.5"
+            android:layout_toLeftOf="@+id/ratingTextView"
+            android:layout_toStartOf="@id/ratingTextView"
+            android:layout_below="@+id/title" />
 
 
 </RelativeLayout>
