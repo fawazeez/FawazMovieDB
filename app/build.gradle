@@ -4,6 +4,10 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
     defaultConfig {
         applicationId "com.adupp.administrator.fawazmoviedb"
         minSdkVersion 10
@@ -18,7 +22,7 @@ android {
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'TMDB_API_KEY', "\"\""
+        it.buildConfigField 'String', 'TMDB_API_KEY', '"95210aba9e6a2e32d4abf1ceb4f39c43"'
     }
 
 }
@@ -27,6 +31,7 @@ repositories {
     jcenter()
 }
 
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
@@ -34,4 +39,6 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.jakewharton:butterknife:7.0.1'
 }
+apply plugin: 'maven'

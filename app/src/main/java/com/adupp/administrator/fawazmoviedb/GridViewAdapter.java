@@ -13,17 +13,20 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Administrator on 1/15/2016.
  */
-public class GridViewAdapter extends ArrayAdapter<GridItem> {
+public class GridViewAdapter extends ArrayAdapter<Griditem> {
 
     private Context mContext;
     private int layoutResourceId;
-    private ArrayList<GridItem> mGridData = new ArrayList<GridItem>();
+    private ArrayList<Griditem> mGridData = new ArrayList<Griditem>();
 
 
-    public GridViewAdapter(Context mContext, int layoutResourceId, ArrayList<GridItem> mGridData)
+    public GridViewAdapter(Context mContext, int layoutResourceId, ArrayList<Griditem> mGridData)
     {
         super(mContext,layoutResourceId,mGridData);
         this.layoutResourceId = layoutResourceId;
@@ -31,7 +34,7 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
         this.mGridData = mGridData;
     }
 
-    public void setGridData(ArrayList<GridItem> mGridData) {
+    public void setGridData(ArrayList<Griditem> mGridData) {
         this.mGridData = mGridData;
         notifyDataSetChanged();
     }
@@ -44,9 +47,7 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
         {
             LayoutInflater inflater= ((Activity)mContext).getLayoutInflater();
             row=inflater.inflate(layoutResourceId,parent,false);
-            holder = new ViewHolder();
-            holder.titleTextView=(TextView)row.findViewById(R.id.movieNameTextView);
-            holder.imageView= (ImageView) row.findViewById(R.id.movieImageView);
+            holder = new ViewHolder(row);
             row.setTag(holder);
         }
             else
@@ -55,15 +56,18 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
         }
 
         //String item = "http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg" ;
-        GridItem item = mGridData.get(position);
+        Griditem item = mGridData.get(position);
         holder.titleTextView.setText(item.getOriginal_title());
-        Picasso.with(mContext).load(item.getPoster_path()).placeholder(R.mipmap.ic_launcher).into(holder.imageView);
+        Picasso.with(mContext).load(item.getPoster_path()).placeholder(R.mipmap.ic_launcher).error(R.drawable.connection_error).into(holder.imageView);
          return row;
        // return super.getView(position, convertView, parent);
     }
     static class ViewHolder {
-        TextView titleTextView;
-        ImageView imageView;
+        @Bind(R.id.movieNameTextView) TextView titleTextView;
+        @Bind(R.id.movieImageView) ImageView imageView;
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
 

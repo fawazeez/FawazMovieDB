@@ -3,7 +3,7 @@ package com.adupp.administrator.fawazmoviedb;
 /**
  * Created by Administrator on 1/17/2016.
  */
-public class GridItem {
+public class Griditem {
 
     private String id;
     private String poster_path;
@@ -11,7 +11,7 @@ public class GridItem {
     private String overview;
     private String vote_average;
     private String release_date;
-    public GridItem()
+    public Griditem()
     {
         super();
     }
