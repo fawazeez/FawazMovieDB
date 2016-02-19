@@ -2,6 +2,7 @@ package com.adupp.administrator.fawazmoviedb;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,15 +39,15 @@ public class MovieDetailFragment extends Fragment {
     private static final String TITLE_INTENT_KEY = "Original Title";
     private static final String ID_INTENT_KEY = "ID";
     private static final String OVERVIEW_INTENT_KEY = "Synopsis ";
-    private static final String POSTERPATH_INTENT_KEY = "Poter";
+    private static final String POSTERPATH_INTENT_KEY = "Poster";
     private static final String USERRATING_INTENT_KEY = "User Rating";
     private static final String RELEASEDATE_INTENT_KEY = "Release Date";
     private static final String API_URL = "http://api.themoviedb.org/3/";
     private static final String API_KEY = BuildConfig.TMDB_API_KEY;
     public Integer mID;
     public static String key = null;
-    TextView reviewTextView;
-    ImageButton trailerImage;
+
+
     public MovieDetailFragment() {
     }
 
@@ -58,9 +59,7 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
-        reviewTextView= (TextView) rootView.findViewById(R.id.reviewTextView);
-        trailerImage= (ImageButton) rootView.findViewById(R.id.trailerImage);
+        final View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         Intent intent = getActivity().getIntent();
         mID = intent.getIntExtra(ID_INTENT_KEY,0);
         String releaseDate= null;
@@ -99,32 +98,39 @@ public class MovieDetailFragment extends Fragment {
             public void onResponse(Call<Trailer> call, Response<Trailer> response) {
                 if (response.isSuccess()) {
                     Uri builtUri= null;
-
+                    ViewGroup trailerLayout = (ViewGroup)rootView.findViewById(R.id.trailerLayout);
+                    int i=0;
                     Trailer trailer = response.body();
                     for (Trailer.Result results : trailer.results) {
-                        key = results.key;
-                        Uri.Builder youtubeUri = new Uri.Builder();
-                        youtubeUri.scheme("http");
-                        youtubeUri.authority("img.youtube.com");
-                        youtubeUri.appendPath("vi");
-                        youtubeUri.appendPath(key);
-                        youtubeUri.appendPath("default.jpg");
-                        builtUri = youtubeUri.build();
+                        ++i;
+                        if(i<3) {
+                            ImageButton trailerImage = new ImageButton(getActivity());
+                            key = results.key;
+                            Uri.Builder youtubeUri = new Uri.Builder();
+                            youtubeUri.scheme("http");
+                            youtubeUri.authority("img.youtube.com");
+                            youtubeUri.appendPath("vi");
+                            youtubeUri.appendPath(key);
+                            youtubeUri.appendPath("default.jpg");
+                            builtUri = youtubeUri.build();
+                            Picasso.with(getActivity()).load(builtUri).placeholder(R.mipmap.ic_launcher).error(R.drawable.connection_error).into(trailerImage);
+                            trailerImage.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    try {
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + key));
+                                        startActivity(intent);
+                                    } catch (ActivityNotFoundException ex) {
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + key));
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
 //                        builtUri = Uri.parse("http://img.youtube.com/vi/"+key+"/default.jpg").buildUpon().build();
-                    }
-                    Picasso.with(getActivity()).load(builtUri).placeholder(R.mipmap.ic_launcher).error(R.drawable.connection_error).into(trailerImage);
-                    trailerImage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try{
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + key));
-                                startActivity(intent);
-                            }catch (ActivityNotFoundException ex){
-                                Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v="+key));
-                                startActivity(intent);
-                            }
+                            trailerLayout.addView(trailerImage);
                         }
-                    });
+                    }
+
                 }
             }
 
@@ -141,10 +147,16 @@ public class MovieDetailFragment extends Fragment {
             public void onResponse(Call<Review> call, Response<Review> response) {
                 if (response.isSuccess()) {
                     Review review = response.body();
-                    reviewTextView.setText(review.id + "\n\n");
+                    ViewGroup reviewLayout = (ViewGroup)rootView.findViewById(R.id.reviewLayout);
                     for (Review.Result results : review.results) {
-                        reviewTextView.setText(reviewTextView.getText() + results.author +
-                                " - " + results.content + "\n");
+                        TextView reviewAuthorTextView =new TextView(getActivity());
+                        TextView reviewTextView =new TextView(getActivity());
+                        reviewAuthorTextView.setText(getString(R.string.author_label )+
+                                "-" + results.author );
+                        reviewAuthorTextView.setTypeface(null, Typeface.BOLD);
+                        reviewTextView.setText("\t" + results.content +"\n");
+                        reviewLayout.addView(reviewAuthorTextView);
+                        reviewLayout.addView(reviewTextView);
                     }
                 }
             }

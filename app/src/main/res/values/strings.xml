@@ -4,8 +4,10 @@
     <string name="title_activity_movie__detail">Movie_Detail</string>
     <string name="naLabel">Not Available</string>
     <string name="release_date_label">Released On:</string>
-
     <string name="synopsis_label">Synopsis :</string>
+    <string name="trailer_label">Trailers :</string>
+    <string name="review_label">Reviews :</string>
+    <string name="author_label">Author :</string>
     <string name="content_description_image">Movie Image</string>
 
     <string name="option_sort_title">Sort By</string>

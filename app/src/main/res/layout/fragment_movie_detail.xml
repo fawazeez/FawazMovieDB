@@ -21,21 +21,32 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
 >
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/movie_item_image"
-        android:layout_centerHorizontal="true"
-        android:textStyle="bold"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/titleLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true">
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/colorBackground"
+                android:padding="5dp"
+                android:background="@color/colorPrimary"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <ImageView
-        android:id="@+id/movie_item_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/content_description_image"
-        android:layout_alignParentTop="true" />
+            <ImageView
+                android:id="@+id/movie_item_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/content_description_image"
+                />
+
+        </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -79,7 +90,7 @@
         android:id="@+id/ratingTextView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/title"
+        android:layout_below="@+id/titleLayout"
  />
 
 
@@ -92,20 +103,47 @@
             android:stepSize="0.5"
             android:layout_toLeftOf="@+id/ratingTextView"
             android:layout_toStartOf="@id/ratingTextView"
-            android:layout_below="@+id/title" />
+            android:layout_below="@+id/titleLayout" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/reviewTextView"
-            android:layout_below="@+id/OverViewText" />
+            android:text="@string/trailer_label"
+            style="@style/CustomLabelStyle"
+            android:id="@+id/trailerLabelTextView"
+            android:layout_below="@+id/OverViewText"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
-        <ImageButton
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/trailerLabelTextView"
+            android:id="@+id/trailerLayout">
+        </LinearLayout>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/trailerImage"
-            android:layout_below="@+id/reviewTextView"  />
+            style="@style/CustomLabelStyle"
+            android:text="@string/review_label"
+            android:id="@+id/reviewLabelTextView"
+            android:layout_below="@+id/trailerLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/reviewLabelTextView"
+            android:id="@+id/reviewLayout">
+
+        </LinearLayout>
+
+
 
 
     </RelativeLayout>

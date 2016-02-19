@@ -34,7 +34,7 @@ public class MovieListActivityFragment extends Fragment {
     private static final String TITLE_INTENT_KEY = "Original Title";
     private static final String ID_INTENT_KEY = "ID";
     private static final String OVERVIEW_INTENT_KEY = "Synopsis ";
-    private static final String POSTERPATH_INTENT_KEY = "Poter";
+    private static final String POSTERPATH_INTENT_KEY = "Poster";
     private static final String USERRATING_INTENT_KEY = "User Rating";
     private static final String RELEASEDATE_INTENT_KEY = "Release Date";
 
