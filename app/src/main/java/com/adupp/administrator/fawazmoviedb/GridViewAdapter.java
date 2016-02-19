@@ -62,6 +62,7 @@ public class GridViewAdapter extends ArrayAdapter<Griditem> {
          return row;
        // return super.getView(position, convertView, parent);
     }
+
     static class ViewHolder {
         @Bind(R.id.movieNameTextView) TextView titleTextView;
         @Bind(R.id.movieImageView) ImageView imageView;

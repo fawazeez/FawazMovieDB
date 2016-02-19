@@ -94,8 +94,21 @@
             android:layout_toStartOf="@id/ratingTextView"
             android:layout_below="@+id/title" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/reviewTextView"
+            android:layout_below="@+id/OverViewText" />
 
-</RelativeLayout>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trailerImage"
+            android:layout_below="@+id/reviewTextView"  />
+
+
+    </RelativeLayout>
 
     </ScrollView>
 </FrameLayout>

@@ -32,6 +32,7 @@ import java.util.ArrayList;
 public class MovieListActivityFragment extends Fragment {
     private static final String TAG = MovieListActivityFragment.class.getSimpleName();
     private static final String TITLE_INTENT_KEY = "Original Title";
+    private static final String ID_INTENT_KEY = "ID";
     private static final String OVERVIEW_INTENT_KEY = "Synopsis ";
     private static final String POSTERPATH_INTENT_KEY = "Poter";
     private static final String USERRATING_INTENT_KEY = "User Rating";
@@ -44,9 +45,15 @@ public class MovieListActivityFragment extends Fragment {
     private void UpdateMovieList()
     {
         String sortBy = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(getString(R.string.option_sort_key), getString(R.string.option_sort_popularity_value));
-        FetchMovieTask  movieTask = new FetchMovieTask(getActivity());
-        MovieListAdapter.clear();
-        movieTask.execute(sortBy);
+        if(sortBy.equals("fav")) {
+            MovieListAdapter.clear();
+        }
+        else
+        { FetchMovieTask movieTask = new FetchMovieTask(getActivity());
+            MovieListAdapter.clear();
+            movieTask.execute (sortBy);
+
+        }
 
     }
 
@@ -70,6 +77,7 @@ public class MovieListActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Griditem item = (Griditem) parent.getItemAtPosition(position);
                 Intent detailAct = new Intent(getActivity(), MovieDetail.class);
+                detailAct.putExtra(ID_INTENT_KEY, Integer.parseInt(item.getId()));
                 detailAct.putExtra(TITLE_INTENT_KEY, item.getOriginal_title());
                 detailAct.putExtra(OVERVIEW_INTENT_KEY, item.getOverview());
                 detailAct.putExtra(POSTERPATH_INTENT_KEY, item.getPoster_path());

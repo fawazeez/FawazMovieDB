@@ -12,7 +12,10 @@
     <string name="option_sort_key">sort</string>
     <string name="option_sort_popularity_label">Popularity</string>
     <string name="option_sort_rating_label">Rated</string>
+    <string name="option_sort_favorite_label">Favorites</string>
+
 
     <string name="option_sort_popularity_value">popularity.desc</string>
     <string name="option_sort_rating_value">vote_average.desc</string>
+    <string name="option_sort_favorite_value">fav</string>
 </resources>
