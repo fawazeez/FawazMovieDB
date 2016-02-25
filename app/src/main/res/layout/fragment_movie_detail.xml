@@ -26,7 +26,14 @@
             android:id="@+id/titleLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
             android:layout_alignParentTop="true">
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/favCheckBox"
+                android:gravity="center"
+                android:button="@drawable/favorite"/>
             <TextView
                 android:id="@+id/title"
                 android:layout_width="0dp"
@@ -36,7 +43,6 @@
                 android:gravity="center"
                 android:textColor="@color/colorBackground"
                 android:padding="5dp"
-                android:background="@color/colorPrimary"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <ImageView
@@ -60,6 +66,7 @@
         android:layout_height="wrap_content"
         android:text="@string/naLabel"
         android:id="@+id/dateTextView"
+        android:layout_margin="4dp"
         android:layout_below="@+id/ratingTextView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -71,6 +78,7 @@
         android:text="@string/release_date_label"
         android:id="@+id/release_date_label_TextView"
         android:layout_below="@+id/ratingTextView"
+        android:layout_alignBaseline="@+id/dateTextView"
         android:layout_toLeftOf="@+id/dateTextView"
         android:layout_toStartOf="@id/dateTextView"/>
 
@@ -87,6 +95,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/naLabel"
+        android:layout_margin="5dp"
         android:id="@+id/ratingTextView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -99,6 +108,7 @@
             android:layout_height="wrap_content"
             style="?android:attr/ratingBarStyleSmall"
             android:id="@+id/movieRatingBar"
+            android:layout_margin="5dp"
             android:numStars="10"
             android:stepSize="0.5"
             android:layout_toLeftOf="@+id/ratingTextView"
@@ -117,7 +127,7 @@
 
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/trailerLabelTextView"
@@ -144,6 +154,13 @@
         </LinearLayout>
 
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/test"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/dateTextView"
+            android:layout_toStartOf="@+id/dateTextView" />
 
 
     </RelativeLayout>

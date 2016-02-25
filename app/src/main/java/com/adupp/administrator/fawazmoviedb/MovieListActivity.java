@@ -8,11 +8,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MovieListActivity extends AppCompatActivity {
-
+    private final String LOG_TAG = MovieListActivity.class.getSimpleName();
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
+    public boolean mTwoPane;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_movie_list);
+        if(findViewById(R.id.movie_detail_container)!=null)
+        {mTwoPane=true;
+            if(savedInstanceState!=null)
+                getSupportFragmentManager().beginTransaction().replace(R.id.movie_detail_container,new MovieDetailFragment(),DETAILFRAGMENT_TAG).commit();
+        }else
+        mTwoPane =false;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
