@@ -8,7 +8,7 @@ import com.adupp.administrator.fawazmoviedb.data.MovieContract;
  * Created by fawaz on 2/20/2016.
  */
 public class MovieDbHelper  extends SQLiteOpenHelper{
-    private static final int DATABASE_VERSION=3;
+    private static final int DATABASE_VERSION=4;
     static final String DATABASE_NAME = "movie.db";
     public MovieDbHelper(Context context) {
         super(context, DATABASE_NAME, null,DATABASE_VERSION );

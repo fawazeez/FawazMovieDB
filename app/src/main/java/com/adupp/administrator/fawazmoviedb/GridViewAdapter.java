@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -25,6 +27,7 @@ public class GridViewAdapter extends ArrayAdapter<Griditem> {
 
     private Context mContext;
     private int layoutResourceId;
+    private int mItemSelected = -1 ;
     private ArrayList<Griditem> mGridData = new ArrayList<Griditem>();
 
 
@@ -40,6 +43,8 @@ public class GridViewAdapter extends ArrayAdapter<Griditem> {
         this.mGridData = mGridData;
         notifyDataSetChanged();
     }
+
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -60,8 +65,16 @@ public class GridViewAdapter extends ArrayAdapter<Griditem> {
         //String item = "http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg" ;
         Griditem item = mGridData.get(position);
         holder.titleTextView.setText(item.getOriginal_title());
-        Picasso.with(mContext).load(item.getPoster_path()).placeholder(R.mipmap.ic_launcher).error(R.drawable.connection_error).into(holder.imageView);
-         return row;
+        if(item.getFavorite().toString().equals("N")) {
+            Picasso.with(mContext).load(item.getPoster_path()).placeholder(R.mipmap.ic_launcher).error(R.drawable.connection_error).into(holder.imageView);
+        }else
+        {
+            String idStr = item.getPoster_path().substring(item.getPoster_path().lastIndexOf('/') + 1);
+            File filepath = mContext.getFileStreamPath(idStr);
+            holder.imageView.setImageDrawable(Drawable.createFromPath(filepath.toString()));
+        }
+
+        return row;
        // return super.getView(position, convertView, parent);
     }
 

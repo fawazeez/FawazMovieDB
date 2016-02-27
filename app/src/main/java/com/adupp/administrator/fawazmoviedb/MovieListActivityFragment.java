@@ -11,11 +11,14 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.adupp.administrator.fawazmoviedb.data.MovieContract;
@@ -36,7 +39,8 @@ import java.util.ArrayList;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieListActivityFragment extends Fragment {
+public class MovieListActivityFragment extends Fragment
+{
     private static final String TAG = MovieListActivityFragment.class.getSimpleName();
 
     private static final String TITLE_INTENT_KEY = "Original Title";
@@ -47,6 +51,9 @@ public class MovieListActivityFragment extends Fragment {
     private static final String RELEASEDATE_INTENT_KEY = "Release Date";
     public static GridViewAdapter MovieListAdapter ;
     public static ArrayList<Griditem> movieListArray;
+    private GridView movieGrid;
+    public static int mPosition = GridView.INVALID_POSITION;
+    public static String SELECTED_KEY="POSITIONSELECTED";
     private Callback callback;
     private static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry.TABLE_NAME+"."+ MovieContract.MovieEntry._ID,
@@ -73,20 +80,17 @@ public class MovieListActivityFragment extends Fragment {
         /**
          * DetailFragmentCallback for when an item has been selected.
          */
-        public void onItemSelected(Griditem item);
+        public void onItemSelected(Griditem item,boolean initial);
     }
-    private void UpdateMovieList()
+    public void UpdateMovieList()
     {
-        String sortBy = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(getString(R.string.option_sort_key), getString(R.string.option_sort_popularity_value));
+        String sortBy = Utility.getPreferredSort(getActivity());
         if(sortBy.equals("fav")) {
             MovieListAdapter.clear();
             Griditem movieItem;
             Cursor cursor = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,MOVIE_COLUMNS,null,null,null);
             if(cursor.getCount()>0) {
                 cursor.moveToFirst();
-
-
-
                     for (int i = 0; i < cursor.getCount(); i++) {
                         String posterStr= cursor.getString(COL_POSTER);
                         String movieId = cursor.getString(COL_MOVIE_ID);
@@ -98,24 +102,27 @@ public class MovieListActivityFragment extends Fragment {
                         if (fav.equals("Y")) {
                         movieItem = new Griditem();
                         movieItem.setId(movieId);
-                        movieItem.setPoster_path("http://image.tmdb.org/t/p/w185//" +posterStr);
+                        movieItem.setPoster_path("http://image.tmdb.org/t/p/w185//" + posterStr);
                         movieItem.setOriginal_title(movieName);
                         movieItem.setOverview(synopsis);
                         movieItem.setRelease_date(releaseDate);
                         movieItem.setVote_average(rating);
+                        movieItem.setFavorite("Y");
 //                      if (List.optString(OWM_POSTER) != null && List.optString(OWM_POSTER)!= "")
                         movieListArray.add(movieItem);
                         cursor.moveToNext();
                     }
                 }
                 MovieListAdapter.setGridData(movieListArray);
+
             }
+//            mPosition = GridView.INVALID_POSITION;
+            OnInitialSelected();
         }
         else
-        { FetchMovieTask movieTask = new FetchMovieTask(getActivity());
+        { FetchMovieTask movieTask = new FetchMovieTask(this);
             MovieListAdapter.clear();
-            movieTask.execute (sortBy);
-
+            movieTask.execute(sortBy);
         }
 
     }
@@ -123,7 +130,18 @@ public class MovieListActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        UpdateMovieList();
+//        UpdateMovieList();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        movieGrid.smoothScrollToPosition(mPosition,1);
+    }
+
+    public void initializePosition() {
+        mPosition = GridView.INVALID_POSITION;
     }
 
     @Override
@@ -133,24 +151,27 @@ public class MovieListActivityFragment extends Fragment {
 
         movieListArray = new ArrayList<Griditem>();
         MovieListAdapter = new GridViewAdapter(getActivity(),R.layout.movie_grid_item_layout,movieListArray);
-        GridView movieGrid= (GridView)v.findViewById(R.id.movieGridView);
+        movieGrid= (GridView)v.findViewById(R.id.movieGridView);
         movieGrid.setAdapter(MovieListAdapter);
         movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Griditem item = (Griditem) parent.getItemAtPosition(position);
-//                selectMovie(item);
-                Intent detailAct = new Intent(getActivity(), MovieDetail.class);
-                detailAct.putExtra(ID_INTENT_KEY, Integer.parseInt(item.getId()));
-                detailAct.putExtra(TITLE_INTENT_KEY, item.getOriginal_title());
-                detailAct.putExtra(OVERVIEW_INTENT_KEY, item.getOverview());
-                detailAct.putExtra(POSTERPATH_INTENT_KEY, item.getPoster_path());
-                detailAct.putExtra(USERRATING_INTENT_KEY, item.getVote_average());
-                detailAct.putExtra(RELEASEDATE_INTENT_KEY, item.getRelease_date());
-                startActivity(detailAct);
+                selectMovie(item,false);
+//                Intent detailAct = new Intent(getActivity(), MovieDetail.class);
+//                detailAct.putExtra(ID_INTENT_KEY, Integer.parseInt(item.getId()));
+//                detailAct.putExtra(TITLE_INTENT_KEY, item.getOriginal_title());
+//                detailAct.putExtra(OVERVIEW_INTENT_KEY, item.getOverview());
+//                detailAct.putExtra(POSTERPATH_INTENT_KEY, item.getPoster_path());
+//                detailAct.putExtra(USERRATING_INTENT_KEY, item.getVote_average());
+//                detailAct.putExtra(RELEASEDATE_INTENT_KEY, item.getRelease_date());
+//                startActivity(detailAct);
+                mPosition = position;
             }
         });
+
+        if(savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY))
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
 
         return v;
     }
@@ -158,19 +179,38 @@ public class MovieListActivityFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if(context instanceof Callback)
-//            callback = (Callback) context;
-//        else
-//            throw new ClassCastException(context.toString()+"must implement CallBack");
+        if(context instanceof Callback)
+            callback = (Callback) context;
+        else
+            throw new ClassCastException(context.toString()+"must implement CallBack");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-//        callback=null;
+        callback=null;
     }
 
-    private void selectMovie(Griditem item) {
-        callback.onItemSelected(item);
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mPosition!=GridView.INVALID_POSITION)
+            outState.putInt(SELECTED_KEY,mPosition);
+
+        super.onSaveInstanceState(outState);
+    }
+
+
+    public void OnInitialSelected (){
+        if(mPosition==GridView.INVALID_POSITION){
+            if (movieListArray.size()>0) {
+                Griditem item = (Griditem) movieListArray.get(0);
+                selectMovie(item,true);
+                mPosition = 0;
+            }else
+            selectMovie(null,true);
+        }
+    }
+    private void selectMovie(Griditem item,boolean initial) {
+        callback.onItemSelected(item,initial);
     }
 }

@@ -11,6 +11,7 @@ public class Griditem {
     private String overview;
     private String vote_average;
     private String release_date;
+    private String favorite;
     public Griditem()
     {
         super();
@@ -62,6 +63,14 @@ public class Griditem {
 
     public void setRelease_date(String release_date) {
         this.release_date = release_date;
+    }
+
+    public String getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(String favorite) {
+        this.favorite = favorite;
     }
 
 

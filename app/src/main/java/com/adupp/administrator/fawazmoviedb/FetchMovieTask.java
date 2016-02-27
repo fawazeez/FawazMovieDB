@@ -1,10 +1,14 @@
 package com.adupp.administrator.fawazmoviedb;
 
+import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.adupp.administrator.fawazmoviedb.data.MovieContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,17 +21,22 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by fawaz on 2/17/2016.
  */
 public class FetchMovieTask extends AsyncTask<String,Void,Integer>
 {
-    private static final String TAG = MovieListActivityFragment.class.getSimpleName();
-    private final Context mContext;
 
-    public FetchMovieTask(Context context) {
-        mContext = context;
+    private static final String TAG = MovieListActivityFragment.class.getSimpleName();
+    private  MovieListActivityFragment fragment;
+
+
+
+
+    public FetchMovieTask(MovieListActivityFragment a) {
+        this.fragment = a;
     }
 
     @Override
@@ -119,24 +128,53 @@ public class FetchMovieTask extends AsyncTask<String,Void,Integer>
         final String OWM_VOTE_AVERAGE = "vote_average";
         final String OWM_OVERVIEW = "overview";
         Griditem movieItem;
-        String re = null;
+
+
 
         JSONObject response = new JSONObject(result);
         JSONArray results = response.getJSONArray(OWM_RESULTS);
-        String[] resultStr = new String[results.length()];
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(results.length());
+        String mID ;
+        String mTitle;
+        String mOverView;
+        String mReleaseDate;
+        String mRating;
+        String mPosterPath;
         for (int i = 0; i < results.length(); i++) {
             movieItem = new Griditem();
+
+            ContentValues movieDetails = new ContentValues();
             JSONObject List = results.getJSONObject(i);
-            movieItem.setId(List.getString(OWM_ID));
-            movieItem.setPoster_path("http://image.tmdb.org/t/p/w185//" + List.optString(OWM_POSTER));
-            movieItem.setOriginal_title(List.optString(OWM_ORIGINAL_TITLE));
-            movieItem.setOverview(List.optString(OWM_OVERVIEW));
-            movieItem.setRelease_date(List.optString(OWM_RELEASE_DATE));
-            movieItem.setVote_average(List.getString(OWM_VOTE_AVERAGE));
+             mID =List.getString(OWM_ID);
+             mTitle=List.optString(OWM_ORIGINAL_TITLE);
+             mOverView=List.optString(OWM_OVERVIEW);
+             mReleaseDate =List.optString(OWM_RELEASE_DATE);
+             mRating= List.getString(OWM_VOTE_AVERAGE);
+             mPosterPath= "http://image.tmdb.org/t/p/w185//" + List.optString(OWM_POSTER);
+//            movieDetails.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID,mID);
+//            movieDetails.put(MovieContract.MovieEntry.COLUMN_MOVIE_NAME, List.optString(OWM_ORIGINAL_TITLE));
+//            movieDetails.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS, mOverView);
+//            movieDetails.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, mReleaseDate);
+//            movieDetails.put(MovieContract.MovieEntry.COLUMN_RATING, mRating);
+//            movieDetails.put(MovieContract.MovieEntry.COLUMN_POSTER, mPosterPath);
+//            movieDetails.put(MovieContract.MovieEntry.COLUMN_FAVORITE,"N");
+//            cVVector.add(movieDetails);
+
+            movieItem.setId(mID);
+            movieItem.setPoster_path(mPosterPath);
+            movieItem.setOriginal_title(mTitle);
+            movieItem.setOverview(mOverView);
+            movieItem.setRelease_date(mReleaseDate);
+            movieItem.setVote_average(mRating);
+            movieItem.setFavorite("N");
 //         if (List.optString(OWM_POSTER) != null && List.optString(OWM_POSTER)!= "")
             MovieListActivityFragment.movieListArray.add(movieItem);
 
         }
+
+
+        Griditem item = (Griditem) MovieListActivityFragment.movieListArray.get(0);
+
         return MovieListActivityFragment.movieListArray.size();
     }
 
@@ -145,9 +183,7 @@ public class FetchMovieTask extends AsyncTask<String,Void,Integer>
         //  MovieListAdapter.clear();
         if (result != 0) {
             MovieListActivityFragment.MovieListAdapter.setGridData(MovieListActivityFragment.movieListArray);
-        }else
-        {
-            Toast.makeText(mContext, "Failed to fetch data!", Toast.LENGTH_SHORT).show();
+            this.fragment.OnInitialSelected();
         }
     }
 }
