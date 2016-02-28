@@ -157,7 +157,6 @@ public class MovieDetailFragment extends Fragment  {
             ((TextView) rootView.findViewById(R.id.ratingTextView)).setText(mRating + " /10");
             mImageView = (ImageView) rootView.findViewById(R.id.movie_item_image);
             mPosterPath = bundle.getString(POSTERPATH_INTENT_KEY);
-            Picasso.with(getActivity()).load(mPosterPath).placeholder(R.mipmap.ic_launcher).error(R.drawable.connection_error).into(mImageView);
             movieDetails.put(MovieContract.MovieEntry.COLUMN_FAVORITE, "N");
 
 
