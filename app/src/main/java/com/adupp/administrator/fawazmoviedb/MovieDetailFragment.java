@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.ShareActionProvider;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -63,6 +65,9 @@ public class MovieDetailFragment extends Fragment  {
     private static final String RELEASEDATE_INTENT_KEY = "Release Date";
     private static final String API_URL = "http://api.themoviedb.org/3/";
     private static final String API_KEY = BuildConfig.TMDB_API_KEY;
+    private static final String TRAILER_SHARE = "#TRAILER : ";
+    private  String TRAILER_URl = null;
+
     ImageView mImageView;
     public Integer mID;
     public String mTitle;
@@ -76,6 +81,7 @@ public class MovieDetailFragment extends Fragment  {
     Call<Trailer> callTrailer;
     Call<Review> callReview;
     private favCallBack callbackfav;
+    private ShareActionProvider shareActionProvider;
 
     private static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry.TABLE_NAME+"."+ MovieContract.MovieEntry._ID,
@@ -202,11 +208,26 @@ public class MovieDetailFragment extends Fragment  {
                 public void onResponse(Call<Trailer> call, Response<Trailer> response) {
                     if (response.isSuccess()) {
                         Uri builtUri = null;
+                        if(shareActionProvider!=null)
+                        {
+                            shareActionProvider.setShareIntent(null);
+                        }
                         ViewGroup trailerLayout = (ViewGroup) rootView.findViewById(R.id.trailerLayout);
                         Trailer trailer = response.body();
+                        int i =0;
                         for (Trailer.Result results : trailer.results) {
                             ImageButton trailerImage = new ImageButton(getActivity());
                             key = results.key;
+                            if(i==0)
+                            {
+                                TRAILER_URl="http://www.youtube.com/watch?v=" + key;
+                                if(shareActionProvider!=null)
+                                {
+                                    shareActionProvider.setShareIntent(createShareTrailer());
+                                }
+
+                            }
+                            i++;
                             Uri.Builder youtubeUri = new Uri.Builder();
                             youtubeUri.scheme("http");
                             youtubeUri.authority("img.youtube.com");
@@ -300,12 +321,14 @@ public class MovieDetailFragment extends Fragment  {
         }
         return rootView;
     }
-//
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.menu,menu);
-//    }
-//
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_share,menu);
+        MenuItem menuItem =menu.findItem(R.id.action_share);
+         shareActionProvider =(ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+    }
+
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {
 //        int id=item.getItemId();
@@ -325,5 +348,14 @@ public class MovieDetailFragment extends Fragment  {
             callReview.cancel();
             callTrailer.cancel();
         }
+    }
+
+    private Intent createShareTrailer()
+    {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,TRAILER_URl);
+        return shareIntent;
     }
 }

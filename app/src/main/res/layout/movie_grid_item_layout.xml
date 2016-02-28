@@ -7,12 +7,14 @@
         android:scaleType="fitCenter"
         android:layout_width="100dp"
         android:layout_height="150dp"
+        android:layout_gravity="center"
         android:id="@+id/movieImageView" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/naLabel"
+        android:layout_gravity="center_horizontal"
         android:maxLines="2"
         android:id="@+id/movieNameTextView" />
 

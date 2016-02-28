@@ -1,11 +1,13 @@
 package com.adupp.administrator.fawazmoviedb;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -114,15 +116,21 @@ public class MovieListActivityFragment extends Fragment
                     }
                 }
                 MovieListAdapter.setGridData(movieListArray);
-
             }
 //            mPosition = GridView.INVALID_POSITION;
             OnInitialSelected();
         }
         else
         { FetchMovieTask movieTask = new FetchMovieTask(this);
-            MovieListAdapter.clear();
-            movieTask.execute(sortBy);
+            if (Utility.getConnectivityStatus(getActivity())!=0) {
+                MovieListAdapter.clear();
+                movieTask.execute(sortBy);
+            }
+            else
+            {
+                Utility.setPreferredSort(getActivity());
+                UpdateMovieList();
+            }
         }
 
     }
@@ -137,10 +145,11 @@ public class MovieListActivityFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        movieGrid.smoothScrollToPosition(mPosition,1);
+        movieGrid.smoothScrollToPosition(mPosition);
     }
 
     public void initializePosition() {
+//        movieGrid.setItemChecked(0,true);
         mPosition = GridView.INVALID_POSITION;
     }
 
@@ -199,12 +208,19 @@ public class MovieListActivityFragment extends Fragment
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mPosition = GridView.INVALID_POSITION;
+    }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void OnInitialSelected (){
         if(mPosition==GridView.INVALID_POSITION){
             if (movieListArray.size()>0) {
                 Griditem item = (Griditem) movieListArray.get(0);
-                selectMovie(item,true);
+                selectMovie(item, true);
+                movieGrid.setItemChecked(0, true);
                 mPosition = 0;
             }else
             selectMovie(null,true);

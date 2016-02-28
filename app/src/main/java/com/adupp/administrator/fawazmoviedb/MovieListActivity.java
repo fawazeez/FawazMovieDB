@@ -20,6 +20,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAct
     private  String mSortby = null;
     Bundle bundle = new Bundle();
     public boolean mTwoPane;
+    public boolean mRefresh=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +31,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAct
         if(findViewById(R.id.movie_detail_container)!=null)
         {mTwoPane=true;
             if(savedInstanceState==null)
-                getSupportFragmentManager().beginTransaction().replace(R.id.movie_detail_container,new MovieDetailFragment(),DETAILFRAGMENT_TAG).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.movie_detail_container,new MovieDetailFragment(),DETAILFRAGMENT_TAG).commitAllowingStateLoss();
         }else {
             mTwoPane = false;
 //            getSupportActionBar().setElevation(0f);
@@ -76,6 +77,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAct
         if(mTwoPane) {
             String sortBy = Utility.getPreferredSort(this);
             if (sortBy != null && !sortBy.equals(mSortby)) {
+                mRefresh=false;
                  movieListActivityFragment.initializePosition();
             }
             mSortby = sortBy;
@@ -87,12 +89,10 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAct
     @Override
     protected void onResume() {
         super.onResume();
-        if(mTwoPane && !bundle.isEmpty())
+        if(mTwoPane && !bundle.isEmpty() && mRefresh)
         { MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
             movieDetailFragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.movie_detail_container, movieDetailFragment, DETAILFRAGMENT_TAG).commit();
-
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.movie_detail_container, movieDetailFragment, DETAILFRAGMENT_TAG).commitAllowingStateLoss();
         }
     }
 
@@ -110,7 +110,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAct
                 bundle.putString(RELEASEDATE_INTENT_KEY, item.getRelease_date());
                 movieDetailFragment.setArguments(bundle);
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.movie_detail_container,movieDetailFragment,DETAILFRAGMENT_TAG).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.movie_detail_container,movieDetailFragment,DETAILFRAGMENT_TAG).commitAllowingStateLoss();
         }
         else
         {
@@ -133,9 +133,8 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAct
         {  String sortBy = Utility.getPreferredSort(this);
             if(sortBy.equals("fav")) {
                 MovieListActivityFragment movieListActivityFragment = ((MovieListActivityFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_list));
+                movieListActivityFragment.initializePosition();
                 movieListActivityFragment.UpdateMovieList();
-
-
             }
 
         }

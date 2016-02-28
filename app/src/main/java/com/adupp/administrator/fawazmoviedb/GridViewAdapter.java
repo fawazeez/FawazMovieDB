@@ -73,7 +73,7 @@ public class GridViewAdapter extends ArrayAdapter<Griditem> {
             File filepath = mContext.getFileStreamPath(idStr);
             holder.imageView.setImageDrawable(Drawable.createFromPath(filepath.toString()));
         }
-
+        row.setPressed(true);
         return row;
        // return super.getView(position, convertView, parent);
     }
