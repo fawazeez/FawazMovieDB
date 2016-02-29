@@ -133,7 +133,6 @@ public class FetchMovieTask extends AsyncTask<String,Void,Integer>
 
         JSONObject response = new JSONObject(result);
         JSONArray results = response.getJSONArray(OWM_RESULTS);
-        Vector<ContentValues> cVVector = new Vector<ContentValues>(results.length());
         String mID ;
         String mTitle;
         String mOverView;
@@ -143,7 +142,6 @@ public class FetchMovieTask extends AsyncTask<String,Void,Integer>
         for (int i = 0; i < results.length(); i++) {
             movieItem = new Griditem();
 
-            ContentValues movieDetails = new ContentValues();
             JSONObject List = results.getJSONObject(i);
              mID =List.getString(OWM_ID);
              mTitle=List.optString(OWM_ORIGINAL_TITLE);
@@ -171,10 +169,6 @@ public class FetchMovieTask extends AsyncTask<String,Void,Integer>
             MovieListActivityFragment.movieListArray.add(movieItem);
 
         }
-
-
-        Griditem item = (Griditem) MovieListActivityFragment.movieListArray.get(0);
-
         return MovieListActivityFragment.movieListArray.size();
     }
 

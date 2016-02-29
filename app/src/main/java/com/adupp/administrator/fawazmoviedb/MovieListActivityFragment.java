@@ -118,6 +118,7 @@ public class MovieListActivityFragment extends Fragment
                 MovieListAdapter.setGridData(movieListArray);
             }
 //            mPosition = GridView.INVALID_POSITION;
+            cursor.close();
             OnInitialSelected();
         }
         else

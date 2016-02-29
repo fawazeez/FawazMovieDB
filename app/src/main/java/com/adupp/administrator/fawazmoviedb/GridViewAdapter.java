@@ -27,7 +27,6 @@ public class GridViewAdapter extends ArrayAdapter<Griditem> {
 
     private Context mContext;
     private int layoutResourceId;
-    private int mItemSelected = -1 ;
     private ArrayList<Griditem> mGridData = new ArrayList<Griditem>();
 
 
